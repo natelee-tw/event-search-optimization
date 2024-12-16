@@ -1,31 +1,31 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from typing import List, Dict
-import openai  # OpenAI's library for interacting with ChatGPT
+from openai import OpenAI
+import openai 
 import os
 from dotenv import load_dotenv  # Import dotenv
+import json
 
-
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
 
 
 app = FastAPI()
 
-# Request models
-class SearchRequest(BaseModel):
-    prompt: str
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
+
+client = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
 
 class ClassificationRequest(BaseModel):
     prompt: str
 
-# Response models
-class EventResponse(BaseModel):
-    event: str
-    location: str
 
 class ClassificationResponse(BaseModel):
-    classification: str
-    confidence: float
+    semantics: str
+    keyword: str
+    location: str
+
 
 def classify_search_prompt(prompt: str) -> Dict[str, str]:
     chat_prompt = f"""
@@ -33,15 +33,17 @@ def classify_search_prompt(prompt: str) -> Dict[str, str]:
 
     For every input prompt, extract the following information:
     1. **Semantics**: The overall intent or theme of the prompt.
-    2. **Keyword**: Any significant additional term or entity.
-    3. **Location**: If the prompt mentions a geographic location.
+    2. **Keyword**: Any significant additional term or entity, could include event ID such as A1234, or any acronyms.
+    3. **Location**: If the prompt mentions a geographic location in Singapore
 
-    Always return a JSON object in this format:
+    Always return a JSON object in this exact format:
     {{
       "semantics": "<semantic intent>",
       "keyword": "<significant keyword>",
       "location": "<location>"
     }}
+
+    Do not include additional text or comments.
 
     For example:
     Input: "Elderly Friendly events near Toa Payoh"
@@ -65,66 +67,36 @@ def classify_search_prompt(prompt: str) -> Dict[str, str]:
     """
     
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": chat_prompt}
             ]
         )
-        classification = response["choices"][0]["message"]["content"].strip()
-        return eval(classification)  # Convert string JSON to dictionary
+        # Extract the content from the response
+        raw_content = response.choices[0].message.content.strip()
+        
+        # Parse the JSON response
+        response_data = json.loads(raw_content)
+        print("response_data", response_data)
+        
+        # Validate using the Pydantic model
+        validated_response = ClassificationResponse(**response_data)
+        return validated_response
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Invalid JSON format from ChatGPT.")
+    except ValidationError as ve:
+        raise HTTPException(status_code=500, detail=f"Validation Error: {ve}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error with ChatGPT: {str(e)}")
 
 
-# Mock functions for search logic
-def mock_semantic_search(prompt: str) -> List[Dict[str, str]]:
-    return [
-        {"event": "Semantic Event 1", "location": "Location A"},
-        {"event": "Semantic Event 2", "location": "Location B"},
-    ]
-
-def mock_location_search(prompt: str) -> List[Dict[str, str]]:
-    return [
-        {"event": "Location Event 1", "location": "Location C"},
-        {"event": "Location Event 2", "location": "Location D"},
-    ]
-
-def mock_keyword_search(prompt: str) -> List[Dict[str, str]]:
-    return [
-        {"event": "Keyword Event 1", "location": "Location E"},
-        {"event": "Keyword Event 2", "location": "Location F"},
-    ]
-
-def mock_genai_classification(prompt: str) -> Dict[str, str]:
-    return {"classification": "semantic_search", "confidence": 0.95}
-
-# Endpoints
-@app.post("/semantics-search", response_model=List[EventResponse])
-async def semantics_search(request: SearchRequest):
-    results = mock_semantic_search(request.prompt)
-    if not results:
-        raise HTTPException(status_code=404, detail="No events found for the given prompt.")
-    return results
-
-@app.post("/location-search", response_model=List[EventResponse])
-async def location_search(request: SearchRequest):
-    results = mock_location_search(request.prompt)
-    if not results:
-        raise HTTPException(status_code=404, detail="No events found for the given prompt.")
-    return results
-
-@app.post("/keyword-search", response_model=List[EventResponse])
-async def keyword_search(request: SearchRequest):
-    results = mock_keyword_search(request.prompt)
-    if not results:
-        raise HTTPException(status_code=404, detail="No events found for the given prompt.")
-    return results
 
 @app.post("/genai-classification", response_model=ClassificationResponse)
 async def genai_classification(request: ClassificationRequest):
-    response = mock_genai_classification(request.prompt)
+    response = classify_search_prompt(request.prompt)
     if not response:
         raise HTTPException(status_code=500, detail="Failed to classify the prompt.")
     return response
+
