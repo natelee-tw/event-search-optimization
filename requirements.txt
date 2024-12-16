@@ -4,3 +4,6 @@ pandas
 numpy
 scikit-learn
 openai
+streamlit
+fastapi
+uvicorn

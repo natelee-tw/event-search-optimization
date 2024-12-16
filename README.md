@@ -1,3 +1,9 @@
-# Retrieval Augmented Generation Demo
+# Event Search Optimization
+To start, run `pip install -r requirements.txt`
+streamlit run frontend/app.py
+uvicorn backend.api:app --reload
 
-To start, run `pip install -r requirements.txt`, followed by running create_embedding.ipynb, then get_query.ipynb.
+
+## Architecture
+![](diagrams/architecture.drawio.png)
+
