@@ -8,5 +8,8 @@ def location_search(classification_response, data):
 
     # Get 5 closest events based on location
     data['distance'] = ((data['lat'] - float(lat))**2 + (data['lon'] - float(lon))**2)**0.5
-    output = data.sort_values(by='distance')
+    output = data.sort_values(by='distance').head(20)
+
+    # give a score of 0 to 1 based on distance
+    output['score_location'] = 1 - output['distance'] / output['distance'].max()
     return output
