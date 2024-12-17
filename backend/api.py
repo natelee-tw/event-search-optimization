@@ -1,3 +1,5 @@
+# uvicorn backend.api:app --reload
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, ValidationError
 from typing import List, Dict

@@ -1,5 +1,5 @@
 # create a streamlit app that takes in a search prompt and returns a list of relevant events
-# to run: streamlit run app.py
+# to run: streamlit run frontend/app.py
 
 import streamlit as st
 import pandas as pd
@@ -63,6 +63,7 @@ if st.button("Search"):
         data_combined['score'] = 0
 
         st.write("Combining All Searches and Reranking")
+        st.write("Final Output")
 
         if classification_response['semantics'] != '':
             data_combined = data_combined.merge(semantics_output[["score_semantics"]], left_index=True, right_index=True, how='left')
