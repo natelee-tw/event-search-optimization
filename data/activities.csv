@@ -1,5 +1,5 @@
 Event ID,Activity,Time,Location
-A1128,Yoga Stretch,8am morning,Bishan Park
+A1128,Yoga Stretch,8am,Bishan Park
 A1129,Zumba Gold,9am,Tampines Mall
 A1130,Pilates Core,6pm,Orchard Central
 A1131,Tai Chi Basics,7am,West Coast Park
@@ -68,10 +68,10 @@ A1193,Slow Flow Yoga,8am,Yio Chu Kang Sports Centre
 A1194,Strong Nation,7pm,Tanjong Pagar Centre
 A1195,Dancehall Groove,10am,One Raffles Place
 A1196,High Energy Aerobics,8am,Hillion Mall
-A1197,Core Strength Fusion,6am,Seletar Mall
+    A1197,Core Strength Fusion,6am,Seletar Mall
 A1198,Street Dance,5pm,Great World City
 A1199,Gentle Pilates,7am,Kallang ActiveSG Gym
-A1200,Cardio Blitz,9am,Tampines ActiveSG Gym
+A1200,SITC Cardio Blitz,9am,Tampines ActiveSG Gym
 A1201,Morning Jog,6am,East Coast Park
 A1202,Speed Circuit,6pm,Stadium Walk
 A1203,Strength Powerhouse,8am,Causeway Point

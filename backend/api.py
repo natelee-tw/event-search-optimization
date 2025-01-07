@@ -34,9 +34,9 @@ def classify_search_prompt(prompt: str) -> Dict[str, str]:
     I need your help classifying search prompts into a JSON object. 
 
     For every input prompt, extract the following information:
-    1. **Semantics**: The overall intent or theme of the prompt, only include activities or events.
+    1. **Semantics**: The overall intent or theme of the prompt, only include activities or events or timing.
     2. **Keyword**: Any significant additional term or entity, could include event ID such as A1234, or any acronyms.
-    3. **Location**: If the prompt mentions a geographic location or landmark in Singapore, or 6 digits postal code like 123456.
+    3. **Location**: If the prompt mentions a geographic location or landmark in Singapore like xxx building, or 6 digits postal code like 123456.
 
     Always return a JSON object in this exact format:
     {{
@@ -45,7 +45,7 @@ def classify_search_prompt(prompt: str) -> Dict[str, str]:
       "location": "<location>"
     }}
 
-    Do not include additional text or comments.
+    Do not include additional text or comments. If not in English, to translate to English.
 
     For example:
     Input: "Elderly Friendly events near Toa Payoh"
