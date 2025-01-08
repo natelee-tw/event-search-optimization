@@ -6,8 +6,8 @@ To start, run `pip install -r requirements.txt`
 - Followed by `create_embedding.ipynb"
 
 ## To run Frontend and API
+- Add in secrets.toml into .streamlit folder
 - streamlit run frontend/app.py
-- uvicorn backend.api:app --reload
 
 ## Architecture
 ![](diagrams/architecture.drawio.png)

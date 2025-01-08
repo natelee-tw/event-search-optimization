@@ -25,8 +25,8 @@ search_prompt = st.text_input("Enter your search prompt:", placeholder="Type som
 # get lat and long of all data
 data = pd.read_pickle("data/embedded_activities_lat_lon.pkl")
 
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"),)
+# load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"],)
 
 if st.button("Search"):
     if not search_prompt.strip():

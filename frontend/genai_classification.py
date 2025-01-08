@@ -1,11 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, ValidationError
-from typing import List, Dict
 from openai import OpenAI
 import openai 
 import os
 from dotenv import load_dotenv  # Import dotenv
 import json
+import streamlit as st
+
 
 class ClassificationRequest(BaseModel):
     prompt: str
@@ -22,7 +23,7 @@ app = FastAPI()
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
 
 client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY"),
+    api_key=st.secrets["OPENAI_API_KEY"],
 )
 
 def classify_search_prompt(prompt):
