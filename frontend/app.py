@@ -41,13 +41,13 @@ if st.button("Search"):
 
         if classification_response.semantics!= '':
             st.write("Running Semantics Search")
-            semantics_output = semantics_search(client, data, classification_response["semantics"])
+            semantics_output = semantics_search(client, data, classification_response.semantics)
             st.write(semantics_output[["Event ID", "Activity", "Time", "Location", "score_semantics"]])
 
         if classification_response.keyword != '':
             st.write("Running Keyword Search")
             # perform a keyword search against all keywords from data
-            keyword = classification_response['keyword']
+            keyword = classification_response.keyword
             keyword_output = data[data['text'].str.contains(keyword, case=False, na=False)]
             keyword_output["score_keyword"] = 2
             st.write(keyword_output[["Event ID", "Activity", "Time", "Location", "score_keyword"]])
